@@ -4,12 +4,31 @@ abstract class Employee
 {
     protected $name;
 
+    private static $types = ['Minion', 'CluedUp', 'WellConnected'];
+
+    // 接收一个名称字符串作为参数,并用它随机地实例化一个Employee子类型.
+    public static function recruit(string $name)
+    {
+        $num = rand(1, count(self::$types)) - 1;
+        $class = __NAMESPACE__ . "\\" . self::$types[$num];
+
+        return new $class($name);
+    }
+
     public function __construct(string $name)
     {
         $this->name = $name;
     }
 
     abstract public function fire();
+}
+
+class WellConnected extends Employee
+{
+    public function fire()
+    {
+        print "{$this->name}: I'll call my dad\n";
+    }
 }
 
 class Minion extends Employee
@@ -48,13 +67,10 @@ class NastyBoss
     }
 }
 
-
-
-// 运行
 $boss = new NastyBoss();
-$boss->addEmployee(new Minion('harry'));
-$boss->addEmployee(new Minion('bob'));
-$boss->addEmployee(new CluedUp('mary'));
+$boss->addEmployee(Employee::recruit('bob'));
+$boss->addEmployee(Employee::recruit('harry'));
+$boss->addEmployee(Employee::recruit('mary'));
 $boss->projectFailed();
 $boss->projectFailed();
 $boss->projectFailed();
